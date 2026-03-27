@@ -1,5 +1,4 @@
 build/
 *.o
-*.js
 *.wasm
 .DS_Store

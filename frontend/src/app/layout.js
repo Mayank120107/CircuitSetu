@@ -1,17 +1,17 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Circuit Setu",
+  title: "CircuitSetu",
   description: "Open Source Circuit Simulator",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      <body suppressHydrationWarning>
 
         <header className="header">
-          <h2>Circuit Setu</h2>
+          <h2>CircuitSetu</h2>
 
           <nav>
             <button>Home</button>
