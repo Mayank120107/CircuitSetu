@@ -68,17 +68,24 @@ margin:0;
 
 .element{
 position:absolute;
-background:#dfe6e9;
+background:none;
 padding:6px 10px;
 border-radius:6px;
+font-size: xx-large;
+
+}
+
+.element:active {
+  cursor: grabbing;
 }
 
 /* simulation */
 
 .simulation{
+align-self: flex-end;
 width:240px;
 background:white;
-border-left:1px solid #ddd;
+border-left:5px solid #000000;
 padding:15px;
 }
 
@@ -97,8 +104,7 @@ margin-top:15px;
 }
 
 .canvas{
-
-flex:1;
+ width: 1000px;
 position:relative;
 background:white;
 
@@ -114,12 +120,14 @@ overflow:hidden;
 
 .element{
 
-position:absolute;
+position: absolute;
 padding:10px 14px;
-background:#dfe6e9;
+background: none;
 border-radius:6px;
 cursor:pointer;
 user-select:none;
+font-size: xx-large;
+
 
 }
 

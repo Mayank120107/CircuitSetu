@@ -1,6 +1,13 @@
-"use client";
 
 import { useState } from "react";
+
+const icons = {
+Battery: "🔋",
+Resistor: "🟫",
+LED: "💡",
+Switch: "🎚️",
+Wire: "➖"
+}
 
 export default function Workspace() {
 
@@ -38,13 +45,13 @@ export default function Workspace() {
 
         <div
           key={el.id}
-          className="element"
+          className="element" 
           style={{
             left: el.x,
             top: el.y
           }}
         >
-          {el.icon}
+         {icons[el.type]}
         </div>
 
       ))}
