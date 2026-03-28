@@ -1,18 +1,20 @@
 "use client";
 import { FaBatteryFull } from "react-icons/fa"
 import { MdLightbulb } from "react-icons/md"
+import { TbCircuitSwitchOpen } from "react-icons/tb";
+import { Cable } from 'lucide-react';
 
 const components = [
   { type: "battery", icon: <FaBatteryFull /> },
   { type: "led", icon: <MdLightbulb /> },
-  { type: "switch", icon: "⚫ Switch" },
-  { type: "wire", icon: "〰 Wire" }
+  { type: "switch", icon: <TbCircuitSwitchOpen /> },
+  { type: "wire", icon: <Cable /> }
 ];
 
 export default function Sidebar() {
 
-  function dragStart(e, type) {
-    e.dataTransfer.setData("component", type);
+  function dragStart(e, icon) {
+    e.dataTransfer.setData("component", icon);
   }
 
   return (
@@ -24,12 +26,12 @@ export default function Sidebar() {
       {components.map(c => (
 
         <div
-          key={c.type}
+          key={c.icon}
           className="component"
           draggable
-          onDragStart={(e)=>dragStart(e,c.type)}
+          onDragStart={(e)=>dragStart(e,c.icon)}
         >
-          {c.label}
+          {c.icon} {c.type}
         </div>
 
       ))}

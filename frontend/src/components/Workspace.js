@@ -44,7 +44,7 @@ export default function Workspace() {
             top: el.y
           }}
         >
-          {el.type}
+          {el.icon}
         </div>
 
       ))}
