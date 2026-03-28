@@ -26,7 +26,7 @@ export default function Sidebar() {
       {components.map(c => (
 
         <div
-          key={c.icon}
+          key={c.type}
           className="component"
           draggable
           onDragStart={(e)=>dragStart(e,c.icon)}
