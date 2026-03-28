@@ -10,16 +10,6 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body suppressHydrationWarning>
 
-        <header className="header">
-          <h2>CircuitSetu</h2>
-
-          <nav>
-            <button>Home</button>
-            <button>Examples</button>
-            <button>Docs</button>
-          </nav>
-        </header>
-
         {children}
 
       </body>
