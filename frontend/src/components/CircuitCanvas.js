@@ -1,16 +1,21 @@
 "use client"
 import { FaBatteryFull } from "react-icons/fa"
-import { MdLightbulb } from "react-icons/md"
+import { TbCircuitResistor } from "react-icons/tb";
 import { TbCircuitSwitchOpen } from "react-icons/tb";
+import { TbCircuitGround } from "react-icons/tb";
+import { TbCircuitAmmeter } from "react-icons/tb";
+import { TbCircuitVoltmeter } from "react-icons/tb";
 import { Cable } from 'lucide-react';
 
 import { useState } from "react";
 
 const iconMap = {
   battery: <FaBatteryFull />,
-  led: <MdLightbulb />,
   switch: <TbCircuitSwitchOpen />,
-  wire: <Cable />
+  resistor: <TbCircuitResistor />,
+  ground: <TbCircuitGround />,
+  ammeter: <TbCircuitAmmeter />,
+  voltmeter: <TbCircuitVoltmeter />
 }
 
 export default function CircuitCanvas() {
@@ -99,6 +104,18 @@ function handleConnection(id){
 function getComponent(id){
 
 return components.find(c=>c.id===id)
+
+}
+
+function deleteComponent(id){
+
+// remove component
+setComponents(prev => prev.filter(c => c.id !== id))
+
+// also remove connected wires
+setWires(prev => prev.filter(w => 
+w.from !== id && w.to !== id
+))
 
 }
 
@@ -196,7 +213,7 @@ top: 0,
 left: 0,
 width: "100%",
 height: "100%",
-pointerEvents: "none"
+pointerEvents: "auto"
 }}
 >
 {wires.map((wire,i)=>{
@@ -218,6 +235,12 @@ x2={to.x + toOffset}
 y2={to.y + 20}
 stroke="black"
 strokeWidth="2"
+
+style={{ cursor: "pointer" }}
+pointerEvents="stroke"
+onClick={()=>{
+setWires(prev => prev.filter((_,index)=> index !== i))
+}}
 />
 
 )
@@ -247,6 +270,11 @@ onMouseDown={(e)=>{
 if(e.target.classList.contains("port")) return
 handleMouseDown(comp.id, e)
 }}
+onContextMenu={(e)=>{
+e.preventDefault()
+deleteComponent(comp.id)
+}}
+
 >
 
 {/* LEFT PORT */}
