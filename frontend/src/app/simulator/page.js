@@ -5,10 +5,19 @@ import { FaArrowLeft } from "react-icons/fa"
 import Sidebar from "../../components/Sidebar"
 import SimulationPanel from "../../components/SimulationPanel"
 import CircuitCanvas from "../../components/CircuitCanvas"
+import Script from "next/script"
 
 export default function SimulatorWorkspace() {
   return (
-    <div className="flex flex-col w-full h-screen bg-[#F9F8F4] overflow-hidden text-slate-800 font-mono selection:bg-[#a8d5ba]">
+    <>
+      <Script 
+        src="/circuit_engine.js" 
+        strategy="beforeInteractive"
+        onLoad={() => {
+          console.log("C++ Engine Script Loaded successfully");
+        }}
+      />
+    <div suppressHydrationWarning className="flex flex-col w-full h-screen bg-[#F9F8F4] overflow-hidden text-slate-800 font-mono selection:bg-[#a8d5ba]">
       <div className="h-14 border-b-2 border-slate-800 bg-[#fce6b6] flex items-center px-6 justify-between shrink-0 z-20 shadow-[0_4px_0px_#334155]">
         <div className="flex items-center gap-6">
           <Link 
@@ -44,5 +53,6 @@ export default function SimulatorWorkspace() {
       </div>
 
     </div>
+  </>
   )
 }

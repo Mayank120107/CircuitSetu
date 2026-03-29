@@ -1,14 +1,45 @@
 "use client"
 import { useState } from "react"
+import { generateSimulationPayload } from "../lib/netlistGenerator"
 
 export default function SimulationPanel() {
   const [status, setStatus] = useState("Idle")
   const [batteryVal, setBatteryVal] = useState(9)
   const [resistorVal, setResistorVal] = useState(100)
 
-  const handleRun = () => {
-    setStatus("Compiling Matrix...")
-    setTimeout(() => setStatus("Solved (12ms)"), 600)
+const handleRun = () => {
+    const isReady = typeof window !== "undefined" && (window.wasmReady || (window.Module && window.Module.cwrap));
+
+    if (!isReady) {
+      setStatus("Engine Warming Up...");
+      console.warn("WASM not ready yet. Ensure circuit_engine.js and .wasm are in /public");
+      return;
+    }
+    setStatus("Solving Matrix...");
+    
+    try {
+      const canvasComponents = JSON.parse(localStorage.getItem('circuit_components') || '[]');
+      const canvasWires = JSON.parse(localStorage.getItem('circuit_wires') || '[]');
+      if (canvasComponents.length === 0) {
+        setStatus("Canvas is empty");
+        return;
+      }
+      const jsonPayload = generateSimulationPayload(canvasComponents, canvasWires);
+      const runSimulation = engine.cwrap('run_circuit_simulation', 'string', ['string']);
+      const resultString = runSimulation(jsonPayload);
+      const result = JSON.parse(resultString);
+      console.log("C++ Result:", result);
+      
+      if (result.status === "success") {
+        setStatus("Solved Natively");
+      } else {
+        setStatus("Matrix Error");
+      }
+
+    } catch (e) {
+      console.error("Simulation failed:", e);
+      setStatus("C++ Error");
+    }
   }
 
   return (

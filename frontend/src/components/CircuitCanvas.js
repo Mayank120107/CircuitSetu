@@ -1,7 +1,7 @@
 "use client"
 import { FaBatteryFull } from "react-icons/fa"
 import { TbCircuitResistor, TbCircuitSwitchOpen, TbCircuitGround, TbCircuitAmmeter, TbCircuitVoltmeter } from "react-icons/tb";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 const iconMap = {
   battery: <FaBatteryFull className="text-xl" />,
@@ -20,6 +20,11 @@ export default function CircuitCanvas() {
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const [isPanning, setIsPanning] = useState(false)
+
+  useEffect(() => {
+    localStorage.setItem('circuit_components', JSON.stringify(components));
+    localStorage.setItem('circuit_wires', JSON.stringify(wires));
+  }, [components, wires]);
 
   function startWire(id, side){
     setWireStart({ id, side })
