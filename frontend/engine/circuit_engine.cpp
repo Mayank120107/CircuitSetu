@@ -1,7 +1,8 @@
 #include "circuit_engine.hpp"
+#include "json.hpp"
 #include <Eigen/Dense>
+#include <emscripten.h>
 #include <iostream>
-#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 
@@ -100,13 +101,17 @@ std::string MNASolver::simulate(const std::string &frontend_payload) {
            "Unclosed Loop\"}";
   }
 }
-
 extern "C" {
 EMSCRIPTEN_KEEPALIVE
-const char *run_circuit_simulation(const char *json_str) {
-  static MNASolver solver;
-  static std::string result;
-  result = solver.simulate(json_str);
-  return result.c_str();
+const char *run_circuit_simulation(const char *frontend_payload) {
+  static std::string result_str;
+  try {
+    MNASolver solver;
+    result_str = solver.simulate(std::string(frontend_payload));
+  } catch (const std::exception &e) {
+    result_str =
+        std::string("{\"status\":\"error\",\"message\":\"") + e.what() + "\"}";
+  }
+  return result_str.c_str();
 }
 }
