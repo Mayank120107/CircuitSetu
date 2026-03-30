@@ -5,7 +5,7 @@ export function generateSimulationPayload(components, wires) {
     if (parent[i] === undefined) parent[i] = i;
     if (parent[i] === i) return i;
     return parent[i] = find(parent[i]);
-  }
+  } 
   function union(i, j) {
     let rootI = find(i);
     let rootJ = find(j);
@@ -29,7 +29,7 @@ export function generateSimulationPayload(components, wires) {
   let nextNodeId = 1;
   Object.keys(groups).forEach(root => {
     if (groups[root].hasGround) {
-      groups[root].id = 0; // Ground is ALWAYS Node 0
+      groups[root].id = 0;
     } else {
       groups[root].id = nextNodeId++; 
     }
@@ -38,9 +38,9 @@ export function generateSimulationPayload(components, wires) {
     .filter(c => c.type !== 'ground') 
     .map(c => {
       let engType = c.type === 'battery' ? 'voltage_source' : c.type;
-      
-      let val = engType === 'voltage_source' ? 9.0 : 
-                engType === 'resistor' ? 100.0 : 0.0;
+      let val = c.value !== undefined ? Number(c.value) : 
+                (engType === 'voltage_source' ? 9.0 : 
+                 engType === 'resistor' ? 100.0 : 0.0);
                 
       return {
         id: c.id.toString(),

@@ -1,7 +1,7 @@
 "use client"
 import { FaBatteryFull } from "react-icons/fa"
 import { TbCircuitResistor, TbCircuitSwitchOpen, TbCircuitGround, TbCircuitAmmeter, TbCircuitVoltmeter } from "react-icons/tb";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const iconMap = {
   battery: <FaBatteryFull className="text-xl" />,
@@ -18,16 +18,16 @@ export default function CircuitCanvas({
   wires,
   setWires,
   selectedComponent,
-  setSelectedComponent
+  setSelectedComponent,
+  simResults 
 }) {
 
-
   const [draggingId, setDraggingId] = useState(null)
-
   const [wireStart, setWireStart] = useState(null)
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const [isPanning, setIsPanning] = useState(false)
+  const [hoveredMeterId, setHoveredMeterId] = useState(null)
 
   useEffect(() => {
     localStorage.setItem('circuit_components', JSON.stringify(components));
@@ -51,16 +51,16 @@ export default function CircuitCanvas({
     const x = ((e.clientX - rect.left - pan.x) / zoom) - 40 
     const y = ((e.clientY - rect.top - pan.y) / zoom) - 20
 
-      setComponents([
-  ...components,
-  {
-  id: Date.now(),
-  type,
-  x,
-  y,
-  value: type === "battery" ? 9 : type === "resistor" ? 100 : 0
-  }
-  ])
+    setComponents([
+      ...components,
+      {
+        id: Date.now(),
+        type,
+        x,
+        y,
+        value: type === "battery" ? 9 : type === "resistor" ? 100 : 0
+      }
+    ])
   }
 
   function allowDrop(e){
@@ -93,7 +93,7 @@ export default function CircuitCanvas({
         }
       }}
       
-      onMouseLeave={() => setIsPanning(false)} // Stop panning if mouse leaves canvas
+      onMouseLeave={() => setIsPanning(false)}
 
       onMouseMove={(e) => {
         if (isPanning) {
@@ -206,15 +206,21 @@ export default function CircuitCanvas({
             <div
               key={comp.id}
               className={`absolute flex flex-col items-center justify-center w-[80px] h-[40px] border-2 font-mono text-[#334155] cursor-grab active:cursor-grabbing z-10 transition-colors pointer-events-auto ${
-  isActive 
-    ? 'bg-[#a8d5ba] border-green-600 translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0px_#334155]' 
-    : 'bg-[#F9F8F4] border-[#334155] shadow-[4px_4px_0px_#334155]'
-}`}
+                isActive 
+                  ? 'bg-[#a8d5ba] border-green-600 translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0px_#334155]' 
+                  : 'bg-[#F9F8F4] border-[#334155] shadow-[4px_4px_0px_#334155]'
+              }`}
               style={{ left: comp.x, top: comp.y }}
+              onMouseEnter={() => {
+                if (comp.type === 'ammeter' || comp.type === 'voltmeter') {
+                  setHoveredMeterId(comp.id);
+                }
+              }}
+              onMouseLeave={() => setHoveredMeterId(null)}
+
               onMouseDown={(e)=>{
                 if(e.target.classList.contains("port")) return
                 setSelectedComponent(comp.id)
-                console.log("Selected component:", comp)
                 handleMouseDown(comp.id)
               }}
               onContextMenu={(e)=>{
@@ -233,6 +239,20 @@ export default function CircuitCanvas({
                 {iconMap[comp.type]}
                 <span className="text-[9px] font-bold uppercase tracking-wider mt-[2px]">{comp.type}</span>
               </div>
+              {hoveredMeterId === comp.id && simResults?.status === "success" && (
+                <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-[#334155] border-2 border-[#fce6b6] text-white px-3 py-1 text-xs font-bold font-mono shadow-[2px_2px_0px_rgba(0,0,0,0.5)] pointer-events-none whitespace-nowrap z-50">
+                  {comp.type === 'voltmeter' && (
+                    <span className="text-[#a8d5ba]">
+                      {Number(simResults.voltages?.[comp.id] || 0).toFixed(3)} V
+                    </span>
+                  )}
+                  {comp.type === 'ammeter' && (
+                    <span className="text-[#c8e1e9]">
+                      {Math.abs(Number(simResults.currents?.[comp.id] || 0)).toFixed(3)} A
+                    </span>
+                  )}
+                </div>
+              )}
 
               <div
                 className={`port absolute right-[-7px] top-[13px] w-[10px] h-[10px] border-2 border-[#334155] cursor-crosshair z-20 ${wireStart?.id === comp.id && wireStart?.side === 'right' ? 'bg-[#a8d5ba]' : 'bg-[#fce6b6] hover:bg-[#c8e1e9]'}`}

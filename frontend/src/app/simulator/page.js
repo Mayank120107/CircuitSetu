@@ -12,10 +12,14 @@ const CircuitCanvas = dynamic(() => import("../../components/CircuitCanvas"), { 
 export default function SimulatorWorkspace() {
   const [components, setComponents] = useState([])
   const [wires, setWires] = useState([])
+  const [simResults, setSimResults] = useState(null)
   const [selectedComponent, setSelectedComponent] = useState(null)
   const [hasMounted, setHasMounted] = useState(false);
   useEffect(() => {
     setHasMounted(true);
+    if (document.querySelector('script[src="/circuit_engine.js"]')) {
+      return; 
+    }
     window["Module"] = window["Module"] || {};
     window["Module"].onRuntimeInitialized = () => {
       console.log("C++ WebAssembly Brain Fully Online!");
@@ -67,33 +71,27 @@ export default function SimulatorWorkspace() {
               setComponents={setComponents}
               wires={wires}
               setWires={setWires}
+              simResults={simResults}
               selectedComponent={selectedComponent}
               setSelectedComponent={setSelectedComponent}
           />
         </div>
         <div className="w-80 border-l-2 border-slate-800 bg-[#bfe3cc] shrink-0 flex flex-col relative z-10 shadow-[-4px_0_0px_rgba(51,65,85,0.1)]">
-          <div className="w-80 border-l-2 border-slate-800 bg-[#bfe3cc] shrink-0 flex flex-col relative z-10 shadow-[-4px_0_0px_rgba(51,65,85,0.1)]">
+          <div className="h-[260px] border-b-2 border-slate-800 overflow-hidden">
+            <PropertiesPanel
+              components={components}
+              setComponents={setComponents}
+              selectedComponent={selectedComponent}
+            />
+          </div>
+          <div className="flex-1 flex flex-col">
+            <SimulationPanel 
+              components={components}
+              wires={wires}
+              setSimResults={setSimResults}
+            />
+          </div>
 
-  {/* Properties (TOP) */}
-<div className="w-80 border-l-2 border-slate-800 bg-[#bfe3cc] shrink-0 flex flex-col h-full">
-
-  {/* PROPERTIES (FIXED HEIGHT) */}
-  <div className="h-[260px] border-b-2 border-slate-800 overflow-hidden">
-    <PropertiesPanel
-      components={components}
-      setComponents={setComponents}
-      selectedComponent={selectedComponent}
-    />
-  </div>
-
-  {/* SIMULATION (TAKES REST) */}
-  <div className="flex-1 flex flex-col">
-    <SimulationPanel />
-  </div>
-
-</div>
-
-</div>
         </div>
 
       </div>

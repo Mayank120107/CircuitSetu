@@ -4,17 +4,6 @@ export default function PropertiesPanel({ components, setComponents, selectedCom
 
 const selected = components.find(c => c.id === selectedComponent)
 
-
-function updateValue(val){
-setComponents(prev =>
-prev.map(c =>
-c.id === selected.id
-? { ...c, value: val }
-: c
-)
-)
-}
-
 return (
   <div className="w-full h-full bg-[#bfe3cc] flex flex-col font-mono text-slate-800">
 
@@ -37,6 +26,7 @@ return (
       )}
 
       {selectedComponent && (() => {
+        const compId = typeof selectedComponent === 'object' ? selectedComponent?.id : selectedComponent;
         const comp = components.find(c => c.id === selectedComponent)
         if (!comp) return null
 
