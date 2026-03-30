@@ -58,7 +58,7 @@ export default function CircuitCanvas({
         type,
         x,
         y,
-        value: type === "battery" ? 9 : type === "resistor" ? 100 : 0
+        value: type === "battery" ? 0 : type === "resistor" ? 0 : 0
       }
     ])
   }

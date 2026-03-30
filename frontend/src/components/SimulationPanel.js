@@ -30,7 +30,7 @@ const handleRun = () => {
       const resultString = runSimulation(safeStringPayload);
       const endTime = performance.now();
       const result = JSON.parse(resultString);
-      
+      setSimResults(result);
       console.log("C++ Result:", result);
       
       if (result.status === "success") {

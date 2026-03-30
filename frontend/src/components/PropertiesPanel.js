@@ -1,8 +1,20 @@
 "use client"
 
+import { useState, useEffect } from 'react'
+
 export default function PropertiesPanel({ components, setComponents, selectedComponent }){
 
 const selected = components.find(c => c.id === selectedComponent)
+
+const comp = components.find(c => c.id === selectedComponent)
+
+const [inputValue, setInputValue] = useState(comp ? comp.value.toString() : "")
+
+useEffect(() => {
+  if (comp) {
+    setInputValue(comp.value.toString())
+  }
+}, [comp?.value])
 
 return (
   <div className="w-full h-full bg-[#bfe3cc] flex flex-col font-mono text-slate-800">
@@ -16,7 +28,7 @@ return (
 
     {/* CONTENT */}
     
-    <div className="p-5 flex-1 overflow-auto">
+    <div className="p-2 flex-1 overflow-hidden">
         <div className="min-h-[10px] flex items-center justify-center"></div>
 
       {!selectedComponent && (
@@ -52,14 +64,32 @@ return (
 
                 <input
                   type="number"
-                  value={comp.value}
+                  value={inputValue}
                   onChange={(e) => {
+                    setInputValue(e.target.value)
                     const val = Number(e.target.value)
                     setComponents(prev =>
                       prev.map(c =>
                         c.id === comp.id ? { ...c, value: val } : c
                       )
                     )
+                  }}
+                  onFocus={(e) => {
+                    const defaultVal = comp.type === "battery" ? 9 : comp.type === "resistor" ? 100 : 0;
+                    if (inputValue === defaultVal.toString()) {
+                      setInputValue("");
+                    }
+                  }}
+                  onBlur={(e) => {
+                    if (inputValue === "") {
+                      const defaultVal = comp.type === "battery" ? 9 : comp.type === "resistor" ? 100 : 0;
+                      setInputValue(defaultVal.toString());
+                      setComponents(prev =>
+                        prev.map(c =>
+                          c.id === comp.id ? { ...c, value: defaultVal } : c
+                        )
+                      )
+                    }
                   }}
                   className="w-full bg-white border-2 border-[#334155] p-1.5 text-sm font-bold focus:outline-none focus:bg-[#fce6b6] transition-colors shadow-inner"
                 />

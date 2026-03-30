@@ -3,8 +3,7 @@
 import { FaBatteryFull } from "react-icons/fa"
 import { TbCircuitResistor, TbCircuitSwitchOpen, TbCircuitGround, TbCircuitAmmeter, TbCircuitVoltmeter } from "react-icons/tb";
 const components = [
-  { type: "battery", label: "9V Battery", icon: <FaBatteryFull className="text-xl" /> },
-  { type: "switch", label: "Switch", icon: <TbCircuitSwitchOpen className="text-xl" /> },
+  { type: "battery", label: "Battery", icon: <FaBatteryFull className="text-xl" /> },
   { type: "resistor", label: "Resistor", icon: <TbCircuitResistor className="text-xl" /> },
   { type: "ground", label: "Ground", icon: <TbCircuitGround className="text-xl" /> },
   { type: "ammeter", label: "Ammeter", icon: <TbCircuitAmmeter className="text-xl" /> },

@@ -39,8 +39,8 @@ export function generateSimulationPayload(components, wires) {
     .map(c => {
       let engType = c.type === 'battery' ? 'voltage_source' : c.type;
       let val = c.value !== undefined ? Number(c.value) : 
-                (engType === 'voltage_source' ? 9.0 : 
-                 engType === 'resistor' ? 100.0 : 0.0);
+                (engType === 'voltage_source' ? 0.0 : 
+                 engType === 'resistor' ? 0.0 : 0.0);
                 
       return {
         id: c.id.toString(),
