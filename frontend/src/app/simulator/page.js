@@ -2,21 +2,35 @@
 
 import Link from "next/link"
 import { FaArrowLeft } from "react-icons/fa"
-import Sidebar from "../../components/Sidebar"
-import SimulationPanel from "../../components/SimulationPanel"
-import CircuitCanvas from "../../components/CircuitCanvas"
-import Script from "next/script"
+import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
+const Sidebar = dynamic(() => import("../../components/Sidebar"), { ssr: false });
+const SimulationPanel = dynamic(() => import("../../components/SimulationPanel"), { ssr: false });
+const CircuitCanvas = dynamic(() => import("../../components/CircuitCanvas"), { ssr: false });
 
 export default function SimulatorWorkspace() {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    setHasMounted(true);
+    window["Module"] = window["Module"] || {};
+    window["Module"].onRuntimeInitialized = () => {
+      console.log("C++ WebAssembly Brain Fully Online!");
+      window.wasmReady = true;
+    };
+    const script = document.createElement("script");
+    script.src = "/circuit_engine.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+  if (!hasMounted) {
+    return <div className="h-screen w-full bg-[#F9F8F4]"></div>;
+  }
   return (
-    <>
-      <Script 
-        src="/circuit_engine.js" 
-        strategy="beforeInteractive"
-        onLoad={() => {
-          console.log("C++ Engine Script Loaded successfully");
-        }}
-      />
     <div suppressHydrationWarning className="flex flex-col w-full h-screen bg-[#F9F8F4] overflow-hidden text-slate-800 font-mono selection:bg-[#a8d5ba]">
       <div className="h-14 border-b-2 border-slate-800 bg-[#fce6b6] flex items-center px-6 justify-between shrink-0 z-20 shadow-[0_4px_0px_#334155]">
         <div className="flex items-center gap-6">
@@ -53,6 +67,5 @@ export default function SimulatorWorkspace() {
       </div>
 
     </div>
-  </>
   )
 }
