@@ -78,6 +78,7 @@ std::string MNASolver::simulate(const std::string &frontend_payload) {
     json results;
     results["nodes"] = json::object();
     results["currents"] = json::object();
+    results["voltages"] = json::object();
 
     results["nodes"]["0"] = 0.0;
     for (int i = 0; i < N; i++) {
@@ -87,15 +88,33 @@ std::string MNASolver::simulate(const std::string &frontend_payload) {
     vIndex = 0;
     for (const auto &comp : components) {
       std::string type = comp["type"];
+      std::string id = comp["id"];
+      int nA = comp.value("nodeA", 0);
+      int nB = comp.value("nodeB", 0);
+      double vA =
+          (nA == 0) ? 0.0
+                    : static_cast<double>(results["nodes"][std::to_string(nA)]);
+      double vB =
+          (nB == 0) ? 0.0
+                    : static_cast<double>(results["nodes"][std::to_string(nB)]);
+      double voltageDrop = vA - vB;
+      if (voltageDrop < 0)
+        voltageDrop = -voltageDrop;
+      results["voltages"][id] = voltageDrop;
       if (type == "voltage_source" || type == "ammeter") {
-        results["currents"][comp["id"]] = x(N + vIndex);
+        results["currents"][id] = x(N + vIndex);
         vIndex++;
+      } else if (type == "resistor") {
+        double rValue = comp.value("value", 0.0);
+        double current = (vA - vB) / rValue;
+        results["currents"][id] = current;
+      } else if (type == "voltmeter") {
+        results["currents"][id] = 0.0;
       }
     }
 
     results["status"] = "success";
     return results.dump();
-
   } catch (const std::exception &e) {
     return "{\"status\": \"error\", \"message\": \"Matrix Singularity / "
            "Unclosed Loop\"}";
