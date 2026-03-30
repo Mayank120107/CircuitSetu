@@ -5,10 +5,14 @@ import { FaArrowLeft } from "react-icons/fa"
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 const Sidebar = dynamic(() => import("../../components/Sidebar"), { ssr: false });
+const PropertiesPanel = dynamic(() => import("../../components/PropertiesPanel"), { ssr: false });
 const SimulationPanel = dynamic(() => import("../../components/SimulationPanel"), { ssr: false });
 const CircuitCanvas = dynamic(() => import("../../components/CircuitCanvas"), { ssr: false });
 
 export default function SimulatorWorkspace() {
+  const [components, setComponents] = useState([])
+  const [wires, setWires] = useState([])
+  const [selectedComponent, setSelectedComponent] = useState(null)
   const [hasMounted, setHasMounted] = useState(false);
   useEffect(() => {
     setHasMounted(true);
@@ -58,10 +62,38 @@ export default function SimulatorWorkspace() {
             backgroundSize: '24px 24px'
           }}
         >
-          <CircuitCanvas />
+          <CircuitCanvas
+              components={components}
+              setComponents={setComponents}
+              wires={wires}
+              setWires={setWires}
+              selectedComponent={selectedComponent}
+              setSelectedComponent={setSelectedComponent}
+          />
         </div>
         <div className="w-80 border-l-2 border-slate-800 bg-[#bfe3cc] shrink-0 flex flex-col relative z-10 shadow-[-4px_0_0px_rgba(51,65,85,0.1)]">
-          <SimulationPanel />
+          <div className="w-80 border-l-2 border-slate-800 bg-[#bfe3cc] shrink-0 flex flex-col relative z-10 shadow-[-4px_0_0px_rgba(51,65,85,0.1)]">
+
+  {/* Properties (TOP) */}
+<div className="w-80 border-l-2 border-slate-800 bg-[#bfe3cc] shrink-0 flex flex-col h-full">
+
+  {/* PROPERTIES (FIXED HEIGHT) */}
+  <div className="h-[260px] border-b-2 border-slate-800 overflow-hidden">
+    <PropertiesPanel
+      components={components}
+      setComponents={setComponents}
+      selectedComponent={selectedComponent}
+    />
+  </div>
+
+  {/* SIMULATION (TAKES REST) */}
+  <div className="flex-1 flex flex-col">
+    <SimulationPanel />
+  </div>
+
+</div>
+
+</div>
         </div>
 
       </div>

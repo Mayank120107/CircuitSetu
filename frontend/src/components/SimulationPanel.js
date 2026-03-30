@@ -45,40 +45,12 @@ const handleRun = () => {
   }
 
   return (
-    <aside className="w-full h-full bg-[#bfe3cc] flex flex-col font-mono text-slate-800">
+    <aside className="w-full h-full flex flex-col font-mono text-slate-800">
       <div className="p-4 border-b-2 border-[#334155] bg-[#a8d5ba] shadow-[0_4px_0px_rgba(51,65,85,0.1)] z-10 shrink-0">
         <h2 className="font-bold uppercase tracking-widest text-sm text-center">Properties</h2>
       </div>
-      <div className="p-5 border-b-2 border-[#334155] flex-1">
-        <h3 className="text-xs font-bold uppercase text-slate-500 mb-3 tracking-widest">Selected Node</h3>
-        <div className="bg-[#F9F8F4] border-2 border-[#334155] p-3 shadow-[4px_4px_0px_#334155] mb-6">
-          <div className="flex justify-between items-center mb-3 border-b-2 border-[#334155] pb-2">
-            <span className="font-bold text-sm uppercase">Voltage Source</span>
-            <span className="text-[10px] bg-[#fce6b6] border-2 border-[#334155] px-1 font-bold">ID: BT-1</span>
-          </div>
-          <label className="text-xs font-bold block mb-1">Voltage (V)</label>
-          <input 
-            type="number" 
-            value={batteryVal}
-            onChange={(e) => setBatteryVal(e.target.value)}
-            className="w-full bg-white border-2 border-[#334155] p-1.5 text-sm font-bold focus:outline-none focus:bg-[#fce6b6] transition-colors shadow-inner" 
-          />
-        </div>
-        <div className="bg-[#F9F8F4] border-2 border-[#334155] p-3 shadow-[4px_4px_0px_#334155]">
-          <div className="flex justify-between items-center mb-3 border-b-2 border-[#334155] pb-2">
-            <span className="font-bold text-sm uppercase">Resistor</span>
-            <span className="text-[10px] bg-[#fce6b6] border-2 border-[#334155] px-1 font-bold">ID: R-1</span>
-          </div>
-          <label className="text-xs font-bold block mb-1">Resistance (Ω)</label>
-          <input 
-            type="number" 
-            value={resistorVal}
-            onChange={(e) => setResistorVal(e.target.value)}
-            className="w-full bg-white border-2 border-[#334155] p-1.5 text-sm font-bold focus:outline-none focus:bg-[#fce6b6] transition-colors shadow-inner" 
-          />
-        </div>
-      </div>
-      <div className="p-5 bg-[#F9F8F4] shrink-0 border-t-2 border-[#334155]">
+
+      <div className="mt-auto p-5 bg-[#F9F8F4] border-t-2 border-[#334155]">
         <h3 className="text-xs font-bold uppercase text-slate-500 mb-3 tracking-widest">Engine Output</h3>
         
         <button

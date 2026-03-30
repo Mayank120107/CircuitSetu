@@ -12,10 +12,18 @@ const iconMap = {
   voltmeter: <TbCircuitVoltmeter className="text-xl" />
 }
 
-export default function CircuitCanvas() {
-  const [components, setComponents] = useState([])
+export default function CircuitCanvas({
+  components,
+  setComponents,
+  wires,
+  setWires,
+  selectedComponent,
+  setSelectedComponent
+}) {
+
+
   const [draggingId, setDraggingId] = useState(null)
-  const [wires, setWires] = useState([])
+
   const [wireStart, setWireStart] = useState(null)
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
@@ -43,7 +51,16 @@ export default function CircuitCanvas() {
     const x = ((e.clientX - rect.left - pan.x) / zoom) - 40 
     const y = ((e.clientY - rect.top - pan.y) / zoom) - 20
 
-    setComponents([...components, { id: Date.now(), type, x, y }])
+      setComponents([
+  ...components,
+  {
+  id: Date.now(),
+  type,
+  x,
+  y,
+  value: type === "battery" ? 9 : type === "resistor" ? 100 : 0
+  }
+  ])
   }
 
   function allowDrop(e){
@@ -72,6 +89,7 @@ export default function CircuitCanvas() {
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {
           setIsPanning(true)
+          setSelectedComponent(null)
         }
       }}
       
@@ -182,19 +200,21 @@ export default function CircuitCanvas() {
           })}
         </svg>
         {components.map(comp => {
-          const isActive = wireStart && wireStart.id === comp.id;
+          const isActive = selectedComponent === comp.id;
 
           return(
             <div
               key={comp.id}
-              className={`absolute flex flex-col items-center justify-center w-[80px] h-[40px] border-2 border-[#334155] font-mono text-[#334155] cursor-grab active:cursor-grabbing z-10 transition-colors pointer-events-auto ${
-                isActive 
-                  ? 'bg-[#fce6b6] translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0px_#334155]' 
-                  : 'bg-[#F9F8F4] shadow-[4px_4px_0px_#334155]'
-              }`}
+              className={`absolute flex flex-col items-center justify-center w-[80px] h-[40px] border-2 font-mono text-[#334155] cursor-grab active:cursor-grabbing z-10 transition-colors pointer-events-auto ${
+  isActive 
+    ? 'bg-[#a8d5ba] border-green-600 translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0px_#334155]' 
+    : 'bg-[#F9F8F4] border-[#334155] shadow-[4px_4px_0px_#334155]'
+}`}
               style={{ left: comp.x, top: comp.y }}
               onMouseDown={(e)=>{
                 if(e.target.classList.contains("port")) return
+                setSelectedComponent(comp.id)
+                console.log("Selected component:", comp)
                 handleMouseDown(comp.id)
               }}
               onContextMenu={(e)=>{
