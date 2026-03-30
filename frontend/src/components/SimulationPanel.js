@@ -24,9 +24,11 @@ const handleRun = () => {
         setStatus("Canvas is empty");
         return;
       }
-      const jsonPayload = generateSimulationPayload(canvasComponents, canvasWires);
-      const runSimulation = engine.cwrap('run_circuit_simulation', 'string', ['string']);
-      const resultString = runSimulation(jsonPayload);
+      const rawPayload = generateSimulationPayload(canvasComponents, canvasWires);
+      const safeStringPayload = typeof rawPayload === 'string' ? rawPayload : JSON.stringify(rawPayload);
+      console.log("Sending to C++:", safeStringPayload);
+      const runSimulation = window.Module.cwrap('run_circuit_simulation', 'string', ['string']);
+      const resultString = runSimulation(safeStringPayload);
       const result = JSON.parse(resultString);
       console.log("C++ Result:", result);
       
